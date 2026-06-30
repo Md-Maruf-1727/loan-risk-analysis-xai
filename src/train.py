@@ -7,9 +7,9 @@ import os
 
 from sklearn.model_selection import train_test_split, RandomizedSearchCV, StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, roc_auc_score
+from sklearn.metrics import classification_report, roc_auc_score, precision_recall_curve
 from imblearn.over_sampling import SMOTE
-from imblearn.pipeline import pipeline 
+from imblearn.pipeline import Pipeline 
 
 #--Config------------------------------------------------------------------------
 
@@ -112,16 +112,18 @@ def split_data(df):
     x = df.drop(TARGET, axis=1)
     y = df[TARGET]
 
+    feature_columns = x.columns.to_list()
+
     xtrain, xtest, ytrain, ytest = train_test_split(
         x, y,
         random_state=RANDOM_STATE,
         stratify=y, test_size=TEST_SIZE
     )
-    return xtrain, xtest, ytrain, ytest
+    return xtrain, xtest, ytrain, ytest, feature_columns
 
 #--Train Model ---------------------------------------------------------------
 def train_model(xtrain, ytrain):
-    pipeline = pipeline([
+    pipeline = Pipeline([
         ('smote', SMOTE(random_state=RANDOM_STATE)),
         ('model', RandomForestClassifier(random_state=RANDOM_STATE, n_jobs=-1))
     ])
@@ -150,4 +152,56 @@ def train_model(xtrain, ytrain):
     search.fit(xtrain, ytrain) 
     return search
 
-    
+
+#--Evaluate model ----------------------------------------------------------
+def evaluate_model(model, xtrain, xtest, ytrain, ytest):
+    y_pred = model.predict(xtest)
+    y_pred_proba = model.predict_proba(xtest)[:, 1]
+
+    precisions, recalls, thresholds = precision_recall_curve(ytest, y_pred_proba)
+    f1_scores = 2 * (precisions[:-1] * recalls[:-1]) / (precisions[:-1] + recalls[:-1])
+    optimal_threshold = thresholds[f1_scores.argmax()]
+
+    y_pred_tuned = (y_pred_proba >= optimal_threshold).astype(int)
+
+    print(f"\n{'=' * 30}")
+    print("Random Forest Evaluation Report")
+    print(classification_report(ytest, y_pred_tuned))
+    print(f"ROC AUC : {roc_auc_score(ytest, y_pred_proba):.4f}")
+    print(f"Optimal Threshold : {optimal_threshold:.4f}")
+    print(f"Best Param : {model.best_params_}")
+
+    return optimal_threshold
+
+#--Model save----------------------------------------------------------------
+def model_save(model, feature_columns, optimal_threshold):
+    best_rf = model.best_estimator_.named_steps['model']
+
+    joblib.dump(best_rf, MODEL_PATH)
+    joblib.dump(feature_columns, FEATURE_PATH)
+    joblib.dump(optimal_threshold, "models/threshold.joblib")
+
+    print(f"Model saved: {MODEL_PATH}")
+    print(f"Feature columns saved: {FEATURE_PATH}")
+    print("Threshold saved: models/threshold.joblib")
+
+
+#==Functions Call===============================================================
+def main():
+    df = load_data()
+    df = clean_data(df)
+    df = encode_data(df)
+    df = feature_engineering(df)
+    df = log_transform(df)
+
+    xtrain, xtest, ytrain, ytest, feature_columns = split_data(df)
+
+    model = train_model(xtrain, ytrain)
+
+    optimal_threshold = evaluate_model(model, xtrain, xtest, ytrain, ytest)
+
+    model_save(model, feature_columns, optimal_threshold)
+
+
+if __name__ == '__main__':
+    main()
