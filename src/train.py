@@ -12,10 +12,11 @@ from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline 
 
 #--Config------------------------------------------------------------------------
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DATA_PATH = "Data/credit_risk_dataset.csv"
-MODEL_PATH = "models/rf_model.joblib"
-FEATURE_PATH = "models/feature_columns.joblib"
+DATA_PATH = os.path.join(BASE_DIR, "Data", "credit_risk_dataset.csv")
+MODEL_PATH = os.path.join(BASE_DIR, "models", "rf_model.joblib")
+FEATURE_PATH = os.path.join(BASE_DIR, "models", "feature_columns.joblib")
 RANDOM_STATE = 42
 TEST_SIZE = 0.2
 CV_FOLD = 5
@@ -73,22 +74,10 @@ def encode_data(df):
 
 #--Feature Engineering--------------------------------------------------------
 def feature_engineering(df):
-    df.insert(
-        loc=2, column='person_monthly_income',
-        value=(df['person_income'] / 12).round(2)
-    )
-    df.insert(
-        loc=4, column='emp_stability',
-        value=(df['person_emp_length'] / df['person_age']).round(2)
-    )
-    df.insert(
-        loc=13, column='credit_hist_ratio',
-        value=(df['cb_person_cred_hist_length'] / df['person_age']).round(2)
-    )
-    df.insert(
-        loc=14, column='debt_burden_index',
-        value=((df['loan_amnt'] * (1 + df['loan_int_rate'] / 100)) / df['person_income']).round(2)
-    )
+    df['person_monthly_income'] = (df['person_income'] / 12).round(2)
+    df['emp_stability'] = (df['person_emp_length'] / df['person_age']).round(2)
+    df['credit_hist_ratio'] = (df['cb_person_cred_hist_length'] / df['person_age']).round(2)
+    df['debt_burden_index'] = ((df['loan_amnt'] * (1 + df['loan_int_rate'] / 100)) / df['person_income']).round(2)
 
     return df
 

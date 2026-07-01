@@ -1,12 +1,19 @@
 #Import=======================================================================
 import pandas as pd
 import joblib
-from train import clean_data, encode_data, feature_engineering, log_transform
+import os
+
+try:
+    from src.train import clean_data, encode_data, feature_engineering, log_transform
+except ModuleNotFoundError:
+    from train import clean_data, encode_data, feature_engineering, log_transform
 
 #Configuration================================================================
-MODEL_PATH = "models/rf_model.joblib"
-FEATURE_PATH = "models/feature_columns.joblib"
-THRESHOLD_PATH = "models/threshold.joblib"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+MODEL_PATH = os.path.join(BASE_DIR, "models", "rf_model.joblib")
+FEATURE_PATH = os.path.join(BASE_DIR, "models", "feature_columns.joblib")
+THRESHOLD_PATH = os.path.join(BASE_DIR, "models", "threshold.joblib")
 
 #Load saved model=============================================================
 def load_models():
