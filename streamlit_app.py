@@ -24,7 +24,7 @@ page = st.sidebar.radio(
 )
 
 #==Page 1: Prediction ============================================================
-if page == "prediction":
+if page == "Prediction":
     st.title("Loan Default prediction")
     st.markdown("Fill in the applicant details below to predict loan default risk.")
 
@@ -34,7 +34,7 @@ if page == "prediction":
         person_age = st.number_input("Age", min_value=18, max_value=80, value=25)
         person_income = st.number_input("Person Income", min_value=1000, max_value=1000000, value=50000)
         person_emp_length = st.number_input("Employment Length (years)", min_value=0.0, max_value=40.0, value=3.0)
-        person_home_ownership = st.selectbox("Home Ownership", ["RENT", "OWN", "MORTAGE", "OTHER"])
+        person_home_ownership = st.selectbox("Home Ownership", ["RENT", "OWN", "MORTGAGE", "OTHER"])
         loan_intent = st.selectbox("Loan Intent", ["EDUCATION", "MEDICAL", "VENTURE", "PERSONAL", "DEBTCONSOLIDATION", "HOMEIMPROVEMENT"])
 
 
@@ -44,7 +44,7 @@ if page == "prediction":
         loan_int_rate = st.number_input("Interest Rate (%)", min_value=5.0, max_value=25.0, value=11.5)
         loan_percent_income = st.number_input("Loan % of Income", min_value=0.0, max_value=0.8, value=0.2)
         cb_person_default_on_file = st.selectbox("Previos Default on File", ["Y", "N"])
-        cb_person_cred_hist_length = st.number_input("Credict History Length (years)", min_value=0.0, max_value=30, value=4)
+        cb_person_cred_hist_length = st.number_input("Credict History Length (years)", min_value=1, max_value=30, value=4)
 
     if st.button("Predict", type="primary"):
         input_dict = {
