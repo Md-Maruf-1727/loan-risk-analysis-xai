@@ -96,3 +96,23 @@ elif page == 'Explaination':
     with tab3:
         st.image("explainability/waterfall_plot.png", use_column_width=True)
         st.caption("How each feature pushed the prediction up or down for a single applicant.")
+
+#==Page : Retrain==============================================================
+elif page == "Retrain Model":
+    st.title("Retrain Model")
+    st.markdown("Click the button below to retrain the model with the latest data.")
+
+    st.warning("⚠️ Retraining will overwrite the existing model. This may take a few minutes.")
+
+    if st.button("Start Retraining", type='primary'):
+        with st.spinner("Retraining in progress..."):
+            try:
+                result = subprocess.run(
+                    ["python", "src/train.py"],
+                    capture_output=True,
+                    text=True
+                )
+                st.success("✅ Model retrained successfully!")
+                st.code(result.stdout)
+            except Exception as e:
+                st.error(f"❌ Error: {e}")
