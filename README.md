@@ -2,6 +2,8 @@
 
 A machine learning system that predicts loan default risk and explains *why* each prediction was made, using SHAP-based explainability and an interactive Streamlit dashboard.
 
+🔗 **Live Demo:** [loan-risk-analysis-xai.streamlit.app](https://loan-risk-analysis-xai-ucuhrzekyxrpvkfahnsbsq.streamlit.app/)
+
 ---
 
 ## 📌 Overview
@@ -47,7 +49,8 @@ loan-risk-analysis-xai/
 │   ├── train.py                      # Reusable training pipeline
 │   └── predict.py                    # Preprocessing + inference pipeline
 │
-└── streamlit_app.py                  # Web app (Prediction, Explanation, Retrain)
+├── streamlit_app.py                  # Web app (Prediction, Explanation, Retrain)
+└── requirements.txt                  # Project dependencies
 ```
 
 ---
@@ -124,7 +127,9 @@ This makes the model's reasoning transparent for both developers and non-technic
 
 ## 🌐 Streamlit App
 
-An interactive web app (`streamlit_app.py`) with three pages:
+Try it live: **[loan-risk-analysis-xai.streamlit.app](https://loan-risk-analysis-xai-ucuhrzekyxrpvkfahnsbsq.streamlit.app/)**
+
+The app (`streamlit_app.py`) has three pages:
 
 1. **Prediction** — Enter applicant details and get an instant default prediction with probability and threshold used
 2. **Explanation** — View SHAP summary, bar, and waterfall plots to understand model behavior
@@ -166,7 +171,7 @@ An interactive web app (`streamlit_app.py`) with three pages:
 - **Visualization:** matplotlib, seaborn
 - **Modeling:** scikit-learn, XGBoost, imbalanced-learn (SMOTE)
 - **Explainability:** SHAP
-- **Deployment:** Streamlit
+- **Deployment:** Streamlit (Streamlit Community Cloud)
 - **Model Persistence:** joblib
 
 ---
@@ -174,9 +179,9 @@ An interactive web app (`streamlit_app.py`) with three pages:
 ## 🚀 Future Improvements
 
 - Add model monitoring / drift detection
-- Deploy on cloud (Streamlit Cloud / AWS / Render)
 - Expand explainability to LIME for cross-validation of SHAP insights
 - Add automated unit tests for the preprocessing pipeline
+- CI/CD pipeline for automatic redeployment on model updates
 
 ---
 
